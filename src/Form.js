@@ -14,7 +14,14 @@ class Formulario extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = {contact: {}};
+		this.state = {
+			contact: {},
+			formErrors: {nombre: '', apellidos: '', edad: ''},
+		    nombreValid: false,
+		    apellidosValid: false,
+		    edadValid: false,
+		    formValid: false
+		};
 
 		this.handleNombre = this.handleNombre.bind(this);
 		this.handleApellidos = this.handleApellidos.bind(this);
@@ -23,63 +30,95 @@ class Formulario extends Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
+
 	handleNombre(event){
 	    const contact = this.state.contact;
-	    contact.nombre = event.target.value;
-	    this.setState({contact: contact});
+	    const value = event.target.value;
+	   	contact.nombre =  value;
+	    this.setState({contact: contact}, () => { this.validateField(contact.nombre, value)});;
 	}
 
 
 	handleApellidos(event){
 	    const contact = this.state.contact;
-	    contact.apellidos =  event.target.value;
-	    this.setState({contact: contact});
+	    const value = event.target.value;
+	   	contact.apellidos =  value;
+	    this.setState({contact: contact}, () => { this.validateField(contact.apellidos, value)});
 	}
 
 
 	handleEdad(event){
 	    const contact = this.state.contact;
-	    contact.edad =  event.target.value;
-	    this.setState({contact: contact});
+	    const value = event.target.value;
+	   	contact.edad =  value;
+	    this.setState({contact: contact}, () => { this.validateField(contact.edad, value)});
 	}
 
-/*
-	handleChange(event){
-	    const target = event.target;
-	    const value = target.value;
-	    const name = target.name;
 
-	    this.setState({
-      		value: event.target.value
-      	});
+	validateField(fieldName, value) {
+	  let fieldValidationErrors = this.state.formErrors;
+	  let nombreValid = this.state.nombreValid;
+	  let apellidosValid = this.state.apellidoValid;
+	  let edadValid = this.state.edadValid;
+
+	  switch(fieldName) {
+	    case 'nombre':
+	      nombreValid = value.length <= 20;
+	      fieldValidationErrors.nombre = nombreValid ? '' : ' is too short';
+	      break;
+	    case 'apellidos':
+	      apellidosValid = value.length <= 20;
+	      fieldValidationErrors.apellidos = apellidosValid ? '': ' is too short';
+	      break;
+	    case 'edad':
+	      edadValid = value.match(/^\d+$/);
+	      fieldValidationErrors.edad = edadValid ? '': ' is not a number';
+	      break;
+	    default:
+	      break;
+	  }
+	  this.setState({formErrors: fieldValidationErrors,
+	                  nombreValid: nombreValid,
+	                  apellidosValid: apellidosValid,
+	                  edadValid: edadValid
+	                }, this.validateForm);
 	}
-*/
+
+
+
+	validateForm() {
+	  this.setState({formValid: this.state.nombreValid && this.state.apellidosValid && this.state.edadValid});
+	}
+
 
 	handleSubmit(event){
 		alert('Data submited');
 		this.state = {value: ''};
 	}
 
+
 	render(){
 		return (
-		<form onSubmit={this.handleSubmit}>
-        	<label>
-        		Nombre: 
-	          	<input name="nombre" type="text" value={this.state.contact.nombre} onChange={this.handleNombre} />
-        	</label>
-        	<br/>
-        	<label>
-	          	Apellidos:
-	          	<input name="apellidos" type="text" value={this.state.contact.apellidos} onChange={this.handleApellidos} />
-        	</label>
-        	<br/>
-        	<label>
-	          	Edad:
-	          	<input name="edad" type="text" value={this.state.contact.edad} onChange={this.handleEdad} />
-        	</label>
-        	<br/>
-			<input type="submit" value="Submit" />
-      </form>
+		<div>
+			<form onSubmit={this.handleSubmit}>
+	        	<label>
+	        		Nombre: 
+		          	<input name="nombre" type="text" value={this.state.contact.nombre} onChange={this.handleNombre} />
+	        	</label>
+	        	<br/>
+	        	<label>
+		          	Apellidos:
+		          	<input name="apellidos" type="text" value={this.state.contact.apellidos} onChange={this.handleApellidos} />
+	        	</label>
+	        	<br/>
+	        	<label>
+		          	Edad:
+		          	<input name="edad" type="text" value={this.state.contact.edad} onChange={this.handleEdad} />
+	        	</label>
+	        	<br/>
+				<input type="submit" value="Submit" disabled={!this.state.formValid} />
+	      </form>
+      </div>
 	);
 	}
 }

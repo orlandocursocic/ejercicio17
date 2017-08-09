@@ -6,7 +6,6 @@ import registerServiceWorker from './registerServiceWorker';
 import App from './App';
 import Formulario from './Form';
 
-
 ReactDOM.render(<App />, document.getElementById('root'));
 registerServiceWorker();
 
